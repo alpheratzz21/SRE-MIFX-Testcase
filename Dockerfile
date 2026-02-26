@@ -18,7 +18,7 @@ RUN echo "disable_functions = exec,passthru,shell_exec,system" > /usr/local/etc/
 RUN mkdir -p /run/nginx
 
 # Copy application
-COPY index.php /var/www/html/
+COPY ./app/index.php /var/www/html/
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf

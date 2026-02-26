@@ -1,0 +1,28 @@
+# This file defines what will to do in target server
+---
+- name: Deploy application using Docker Compose
+  hosts: target # target is defined in inventory.ini
+  become: yes #Execute tasks with sudo
+
+  tasks:
+    # Task 1: Make sure apps folder exist in target server
+    - name: Make app folder in server
+      file:
+        path: /opt/app
+        state: directory
+    
+    # Task 2: Copy docker-compose file from local to target server
+    - name: Copy docker-compose file to server
+      copy:
+        src: ../compose.yaml
+        dest: /opt/app/compose.yaml
+    
+    # Task 3: Force update docker compose
+    # pull = download the latest image from DockerHub
+    # up -d = running container in background
+    # --force-recreate = force recreate container even the config file is not changed
+    - name: Force update and run docker compose
+      shell: |
+        cd /opt/app
+        docker compose pull
+        docker compose up -d --force-recreate

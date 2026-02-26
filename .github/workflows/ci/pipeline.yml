@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+# Trigger: executed pipeline when push to main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # job 1 : build - only run when there's changes in Dockerfile
+  build:
+    runs-on: ubuntu-latest
+
+    if: |
+      contains(github.event.commits[0].modified, 'Dockerfile') ||
+      contains(github.event.commits[0].added, 'Dockerfile')
+    
+    steps:
+      # Checkout repo to access the files
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      #Login to DockerHub
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build image
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/mifx-nginx-php:latest .
+
+      # Push to Docker Hub
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/mifx-nginx-php:latest
+
+  # job 2 : deploy - only run when there's changes in Dockerfile or compose.yaml
+  deploy:
+    runs-on: ubuntu-latest
+
+    if: |
+      contains(github.event.commits[0].modified, 'Dockerfile') ||
+      contains(github.event.commits[0].added, 'Dockerfile') ||
+      contains(github.event.commits[0].modified, 'compose.yaml') ||
+      contains(github.event.commits[0].added, 'compose.yaml')
+    
+    steps:
+      # Checkout repo to access the files
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      # Install Ansible at runner Github
+      - name: Install Ansible
+        run: |
+          pip install ansible
+
+      # Setup SSH key to ansible connect to target server
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      
+      #run ansible playbook
+      - name: Deploy with ansible
+        run: ansible-playbook -i ansible/inventory.ini ansible/deploy.yml
