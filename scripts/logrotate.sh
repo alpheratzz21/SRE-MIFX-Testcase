@@ -12,7 +12,7 @@ mkdir -p $ARCHIVE_DIR
 
 # Function for writing logs with timestamps
 log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] %1" | tee -a $SCRIPT_LOG
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a $SCRIPT_LOG
 }
 
 log "Starting check for log in $LOG_DIR"
