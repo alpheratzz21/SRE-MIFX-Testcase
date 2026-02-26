@@ -2,7 +2,7 @@
 FROM php:8.2-fpm-alpine
 
 # Install nginx
-RUN apk add --no-cache nginx
+RUN apk add --no-cache nginx nginx-mod-http-headers-more
 
 # Create non-root user for security hardening
 RUN adduser -D -g 'www' www

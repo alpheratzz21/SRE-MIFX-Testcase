@@ -1,4 +1,4 @@
-# DevOps/SRE Technical Test
+# MIFX Site Reliability Engineer Test
 
 ## Tech Stack
 - **Web Server**: Nginx (non-root, security hardened)
@@ -7,17 +7,16 @@
 - **Container**: Docker + Docker Compose
 - **Database**: PostgreSQL 16
 - **Deployment**: Ansible
-- **CI/CD**: GitLab CI / GitHub Actions
+- **CI/CD**:  GitHub Actions
 
 ---
 
 ## Project Structure
 ```
-devops-test/
+mifx-testcase/
 ├── Dockerfile                       # Docker image definition (Nginx + PHP 8.2 on Alpine)
 ├── nginx.conf                       # Nginx configuration (security hardened)
-├── docker-compose.yml               # Multi-container setup (app + PostgreSQL)
-├── .gitlab-ci.yml                   # GitLab CI/CD pipeline
+├── compose.yaml               # Multi-container setup (app + PostgreSQL)
 ├── .github/
 │   └── workflows/
 │       └── pipeline.yml             # GitHub Actions pipeline (alternative)
@@ -64,15 +63,14 @@ docker compose version
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/YOURUSERNAME/devops-test.git
-cd devops-test
+git clone https://github.com/alpheratzz21/SRE-MIFX-Testcase.git
+cd mifx-testcase
 ```
 
 ### 3. Build Docker Image
 ```bash
-# Replace YOURUSERNAME with your actual Docker Hub username
-# The dot at the end means "build from current folder"
-docker build -t YOURUSERNAME/devops-test:latest .
+
+docker build -t rifqiananda/mifx-nginx-php:latest .
 ```
 
 ### 4. Push to Docker Hub
@@ -81,7 +79,7 @@ docker build -t YOURUSERNAME/devops-test:latest .
 docker login
 
 # Push image
-docker push YOURUSERNAME/devops-test:latest
+docker push rifqiananda/mifx-nginx-php:latest
 ```
 
 ### 5. Start All Services
@@ -237,7 +235,7 @@ Go to: `GitLab repo → Settings → CI/CD → Variables`
 | `DOCKER_USERNAME` | your Docker Hub username | ✅ Mask this |
 | `DOCKER_PASSWORD` | your Docker Hub password | ✅ Mask this |
 
-> **Never hardcode credentials in `.gitlab-ci.yml`** — always use CI/CD Variables.
+> **Never hardcode credentials in `pipeline.yml`** — always use CI/CD Variables.
 
 ---
 
@@ -257,14 +255,6 @@ Go to: `GitHub repo → Settings → Secrets and variables → Actions → New r
 | `DOCKER_USERNAME` | your Docker Hub username | ✅ Keep secret |
 | `DOCKER_PASSWORD` | your Docker Hub password | ✅ Keep secret |
 | `SSH_PRIVATE_KEY` | your SSH private key content | ✅ Keep secret |
-
-#### Key Differences from GitLab CI
-| | GitLab CI | GitHub Actions |
-|---|---|---|
-| Config file location | `.gitlab-ci.yml` | `.github/workflows/*.yml` |
-| Secret variable syntax | `$DOCKER_USERNAME` | `${{ secrets.DOCKER_USERNAME }}` |
-| Trigger by file change | `rules: changes:` | `on: push: paths:` |
-| Secret management | Settings → CI/CD → Variables | Settings → Secrets and variables |
 
 ---
 

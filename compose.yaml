@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # First service : PHP app + Nginx
   app:
