@@ -64,7 +64,7 @@ docker compose version
 ### 2. Clone the Repository
 ```bash
 git clone https://github.com/alpheratzz21/SRE-MIFX-Testcase.git
-cd mifx-testcase
+cd SRE-MIFX-Testcase
 ```
 
 ### 3. Build Docker Image
